@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { requireUser } from "@/lib/auth";
 import { createNote, EMPTY_DOC_JSON } from "@/lib/notes";
+import { plainTextSchema, sanitizeNoteContent } from "@/lib/sanitize";
 
 export type NewNoteFormState = {
   error?: string;
@@ -13,21 +14,15 @@ export type NewNoteFormState = {
 
 const MAX_CONTENT_BYTES = 500_000;
 
-const tiptapDocSchema = z.looseObject({
-  type: z.literal("doc"),
-  content: z.array(z.unknown()).optional(),
-});
-
 const newNoteSchema = z.object({
-  title: z.string().trim().max(200, "Title must be at most 200 characters"),
+  title: plainTextSchema(200),
   contentJson: z
     .string()
     .max(MAX_CONTENT_BYTES, "Note content is too large")
     .transform((value, ctx) => {
       if (value === "") return EMPTY_DOC_JSON;
       try {
-        const doc = tiptapDocSchema.parse(JSON.parse(value));
-        return JSON.stringify(doc);
+        return sanitizeNoteContent(JSON.parse(value));
       } catch {
         ctx.addIssue({ code: "custom", message: "Note content is invalid" });
         return z.NEVER;

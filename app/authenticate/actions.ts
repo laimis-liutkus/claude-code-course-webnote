@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { auth } from "@/lib/auth";
 import { consumeRateLimit, getClientIp, type RateLimitRule } from "@/lib/rate-limit";
+import { plainTextSchema } from "@/lib/sanitize";
 
 export type AuthFormState = {
   error?: string;
@@ -13,14 +14,16 @@ export type AuthFormState = {
   values?: { name?: string; email?: string };
 };
 
+const emailSchema = z.string().trim().toLowerCase().pipe(z.email("Enter a valid email address"));
+
 const signInSchema = z.object({
-  email: z.email("Enter a valid email address"),
+  email: emailSchema,
   password: z.string().min(1, "Password is required"),
 });
 
 const signUpSchema = z.object({
-  name: z.string().trim().min(1, "Name is required").max(100),
-  email: z.email("Enter a valid email address"),
+  name: plainTextSchema(100).pipe(z.string().min(1, "Name is required")),
+  email: emailSchema,
   password: z
     .string()
     .min(8, "Password must be at least 8 characters")
