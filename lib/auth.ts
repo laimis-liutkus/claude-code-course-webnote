@@ -13,6 +13,16 @@ export const auth = betterAuth({
     enabled: true,
     minPasswordLength: 8,
   },
+  // Applies to /api/auth/* only; server actions calling auth.api use lib/rate-limit.ts.
+  rateLimit: {
+    enabled: true,
+    window: 60,
+    max: 100,
+    customRules: {
+      "/sign-in/email": { window: 60, max: 10 },
+      "/sign-up/email": { window: 600, max: 5 },
+    },
+  },
   plugins: [nextCookies()],
 });
 

@@ -27,7 +27,7 @@ bun run lint     # eslint
 
 There is no test setup yet.
 
-Environment variables (see `.env.example`): `BETTER_AUTH_SECRET` (32+ chars) and `DB_PATH` (SQLite file path, e.g. `data/app.db`).
+Environment variables (see `.env`): `BETTER_AUTH_SECRET` (32+ chars) and `DB_PATH` (SQLite file path, e.g. `data/app.db`).
 
 ## Architecture (per SPEC.md)
 

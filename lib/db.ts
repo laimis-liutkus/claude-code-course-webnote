@@ -68,6 +68,12 @@ CREATE TABLE IF NOT EXISTS notes (
 CREATE INDEX IF NOT EXISTS idx_notes_user_id ON notes(user_id);
 CREATE INDEX IF NOT EXISTS idx_notes_public_slug ON notes(public_slug);
 CREATE INDEX IF NOT EXISTS idx_notes_is_public ON notes(is_public);
+
+CREATE TABLE IF NOT EXISTS rate_limit (
+  key TEXT PRIMARY KEY,
+  count INTEGER NOT NULL,
+  reset_at INTEGER NOT NULL
+);
 `;
 
 function openDb(): Database {
