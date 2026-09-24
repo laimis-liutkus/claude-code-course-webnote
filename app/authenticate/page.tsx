@@ -44,7 +44,7 @@ export default async function AuthenticatePage({ searchParams }: Props): Promise
   const copy = COPY[mode];
 
   return (
-    <main className="flex min-h-dvh items-center justify-center px-4 py-12">
+    <main className="flex flex-1 items-center justify-center px-4 py-12">
       <section
         aria-labelledby="auth-heading"
         className="w-full max-w-sm rounded-xl border border-neutral-200 p-8 shadow-sm dark:border-neutral-800"

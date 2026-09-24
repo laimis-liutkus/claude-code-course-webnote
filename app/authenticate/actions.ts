@@ -67,6 +67,16 @@ export async function signInAction(
   redirect("/dashboard");
 }
 
+export async function signOutAction(): Promise<void> {
+  try {
+    await auth.api.signOut({ headers: await headers() });
+  } catch (err) {
+    console.error("Sign out failed", err);
+  }
+
+  redirect("/authenticate");
+}
+
 export async function signUpAction(
   _prev: AuthFormState,
   formData: FormData,
