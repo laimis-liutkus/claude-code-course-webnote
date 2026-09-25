@@ -69,6 +69,8 @@ function ToolbarButton({ label, pressed, onPress, children }: ToolbarButtonProps
       aria-label={label}
       title={label}
       aria-pressed={pressed}
+      // Keep focus in the editor so keystrokes right after a click aren't lost.
+      onMouseDown={(event) => event.preventDefault()}
       onClick={onPress}
       className='min-w-8 rounded px-2 py-1 text-sm font-medium text-neutral-700 hover:bg-neutral-200 focus-visible:outline-2 focus-visible:outline-neutral-900 aria-pressed:bg-neutral-900 aria-pressed:text-white motion-safe:transition-colors dark:text-neutral-300 dark:hover:bg-neutral-800 dark:focus-visible:outline-neutral-100 dark:aria-pressed:bg-neutral-100 dark:aria-pressed:text-neutral-900'
     >
