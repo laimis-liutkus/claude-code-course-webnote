@@ -1,5 +1,5 @@
 import "server-only";
-import { get, run } from "@/lib/db";
+import { get, query, run } from "@/lib/db";
 
 export type Note = {
   id: string;
@@ -59,4 +59,12 @@ export async function createNote(
   const note = await getNoteById(userId, id);
   if (!note) throw new Error(`Failed to load newly created note ${id}`);
   return note;
+}
+
+export async function getNotesByUser(userId: string): Promise<Note[]> {
+  const rows = query<NoteRow>(
+    "SELECT * FROM notes WHERE user_id = ? ORDER BY updated_at DESC, created_at DESC",
+    [userId],
+  );
+  return rows.map(toNote);
 }

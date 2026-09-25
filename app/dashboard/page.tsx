@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import type { JSX } from "react";
+import { NoteList } from "@/components/NoteList";
 import { requireUser } from "@/lib/auth";
+import { getNotesByUser } from "@/lib/notes";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -9,6 +11,7 @@ export const metadata: Metadata = {
 
 export default async function DashboardPage(): Promise<JSX.Element> {
   const user = await requireUser();
+  const notes = await getNotesByUser(user.id);
 
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-10">
@@ -24,6 +27,10 @@ export default async function DashboardPage(): Promise<JSX.Element> {
           New Note
         </Link>
       </header>
+
+      <section aria-label="Notes" className="mt-8">
+        <NoteList notes={notes} />
+      </section>
     </main>
   );
 }
