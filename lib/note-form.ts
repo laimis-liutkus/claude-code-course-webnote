@@ -6,10 +6,10 @@ import { plainTextSchema, sanitizeNoteContent } from '@/lib/sanitize';
 export type NoteFormState = {
   error?: string;
   fieldErrors?: Partial<Record<'title' | 'contentJson', string[]>>;
-  values?: { title?: string; contentJson?: string };
+  values?: { title?: string; contentJson?: string; isPublic?: boolean };
 };
 
-type NoteFormValues = { title: string; contentJson: string };
+type NoteFormValues = { title: string; contentJson: string; isPublic: boolean };
 
 type ParsedNoteForm =
   | { success: true; data: NoteFormValues; values: NoteFormValues }
@@ -31,6 +31,7 @@ const noteFormSchema = z.object({
         return z.NEVER;
       }
     }),
+  isPublic: z.boolean(),
 });
 
 // Shared validation for the create and edit note forms.
@@ -38,6 +39,7 @@ export function parseNoteForm(formData: FormData): ParsedNoteForm {
   const values = {
     title: String(formData.get('title') ?? ''),
     contentJson: String(formData.get('contentJson') ?? ''),
+    isPublic: formData.get('isPublic') === 'on',
   };
 
   const parsed = noteFormSchema.safeParse(values);

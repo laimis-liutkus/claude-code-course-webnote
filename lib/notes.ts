@@ -86,3 +86,28 @@ export async function updateNote(
 export async function deleteNote(userId: string, noteId: string): Promise<void> {
   run('DELETE FROM notes WHERE id = ? AND user_id = ?', [noteId, userId]);
 }
+
+// 16 random bytes → 22 URL-safe chars; unguessable, so public links can't be enumerated.
+function generatePublicSlug(): string {
+  return Buffer.from(crypto.getRandomValues(new Uint8Array(16))).toString('base64url');
+}
+
+// Enabling keeps an existing slug; disabling clears it so the old link stops working.
+export async function setNotePublic(
+  userId: string,
+  noteId: string,
+  isPublic: boolean,
+): Promise<Note | null> {
+  run(
+    `UPDATE notes
+     SET is_public = ?, public_slug = CASE WHEN ? THEN COALESCE(public_slug, ?) ELSE NULL END
+     WHERE id = ? AND user_id = ?`,
+    [isPublic ? 1 : 0, isPublic ? 1 : 0, generatePublicSlug(), noteId, userId],
+  );
+  return getNoteById(userId, noteId);
+}
+
+export async function getNoteByPublicSlug(slug: string): Promise<Note | null> {
+  const row = get<NoteRow>('SELECT * FROM notes WHERE public_slug = ? AND is_public = 1', [slug]);
+  return row ? toNote(row) : null;
+}

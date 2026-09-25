@@ -1,11 +1,21 @@
 import type { Metadata } from 'next';
+import { headers } from 'next/headers';
 import Link from 'next/link';
 import type { JSX } from 'react';
 import { DeleteNoteButton } from '@/components/DeleteNoteButton';
 import { NoteRenderer } from '@/components/NoteRenderer';
 import { PublicBadge } from '@/components/PublicBadge';
+import { ShareLink } from '@/components/ShareLink';
 import { formatDate, toIsoDate } from '@/lib/format';
 import { loadOwnNote } from './load-note';
+
+// Absolute URL for the owner to copy; host only affects the owner's own view, never the lookup.
+async function getPublicNoteUrl(slug: string): Promise<string> {
+  const h = await headers();
+  const host = h.get('x-forwarded-host') ?? h.get('host') ?? 'localhost:3000';
+  const proto = h.get('x-forwarded-proto') ?? (host.startsWith('localhost') ? 'http' : 'https');
+  return `${proto}://${host}/p/${encodeURIComponent(slug)}`;
+}
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -50,6 +60,15 @@ export default async function NotePage({ params }: Props): Promise<JSX.Element> 
             <DeleteNoteButton noteId={note.id} noteTitle={note.title} />
           </div>
         </header>
+
+        {note.publicSlug && (
+          <section
+            aria-label='Sharing'
+            className='mb-6 border-b border-neutral-200 pb-4 dark:border-neutral-800'
+          >
+            <ShareLink url={await getPublicNoteUrl(note.publicSlug)} />
+          </section>
+        )}
 
         <NoteRenderer contentJson={note.contentJson} />
       </article>

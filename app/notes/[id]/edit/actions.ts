@@ -5,7 +5,7 @@ import { notFound, redirect } from 'next/navigation';
 import { z } from 'zod';
 import { requireUser } from '@/lib/auth';
 import { parseNoteForm, type NoteFormState } from '@/lib/note-form';
-import { updateNote, type Note } from '@/lib/notes';
+import { setNotePublic, updateNote, type Note } from '@/lib/notes';
 
 export async function updateNoteAction(
   rawNoteId: string,
@@ -19,9 +19,11 @@ export async function updateNoteAction(
   const parsed = parseNoteForm(formData);
   if (!parsed.success) return parsed.state;
 
+  const { isPublic, ...content } = parsed.data;
   let note: Note | null;
   try {
-    note = await updateNote(user.id, noteId.data, parsed.data);
+    note = await updateNote(user.id, noteId.data, content);
+    if (note) note = await setNotePublic(user.id, note.id, isPublic);
   } catch (err) {
     console.error('Failed to update note', err);
     return { error: 'Could not save your changes. Please try again.', values: parsed.values };

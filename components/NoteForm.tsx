@@ -10,6 +10,7 @@ type NoteFormProps = {
   action: (prev: NoteFormState, formData: FormData) => Promise<NoteFormState>;
   initialTitle?: string;
   initialContent?: JSONContent;
+  initialIsPublic?: boolean;
   submitLabel: string;
   pendingLabel: string;
   cancelHref?: string;
@@ -21,6 +22,7 @@ export function NoteForm({
   action,
   initialTitle,
   initialContent,
+  initialIsPublic = false,
   submitLabel,
   pendingLabel,
   cancelHref,
@@ -86,6 +88,25 @@ export function NoteForm({
             {contentError}
           </p>
         )}
+      </div>
+
+      <div className='flex items-start gap-3'>
+        <input
+          id='isPublic'
+          name='isPublic'
+          type='checkbox'
+          defaultChecked={state.values?.isPublic ?? initialIsPublic}
+          aria-describedby='isPublic-hint'
+          className='mt-1 size-4 accent-neutral-900 dark:accent-neutral-100'
+        />
+        <div className='flex flex-col gap-0.5'>
+          <label htmlFor='isPublic' className='text-sm font-medium'>
+            Share publicly
+          </label>
+          <p id='isPublic-hint' className='text-sm text-neutral-600 dark:text-neutral-400'>
+            Anyone with the link can view this note. Turning this off disables the link.
+          </p>
+        </div>
       </div>
 
       <div className='flex items-center justify-end gap-3'>

@@ -29,6 +29,7 @@ export default async function EditNotePage({ params }: Props): Promise<JSX.Eleme
           action={updateNoteAction.bind(null, note.id)}
           initialTitle={note.title}
           initialContent={JSON.parse(note.contentJson)}
+          initialIsPublic={note.isPublic}
           submitLabel='Save changes'
           pendingLabel='Saving…'
           cancelHref={`/notes/${note.id}`}
