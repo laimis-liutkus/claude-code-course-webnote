@@ -1,11 +1,11 @@
-"use server";
+'use server';
 
-import { revalidatePath } from "next/cache";
-import { notFound, redirect } from "next/navigation";
-import { z } from "zod";
-import { requireUser } from "@/lib/auth";
-import { parseNoteForm, type NoteFormState } from "@/lib/note-form";
-import { updateNote, type Note } from "@/lib/notes";
+import { revalidatePath } from 'next/cache';
+import { notFound, redirect } from 'next/navigation';
+import { z } from 'zod';
+import { requireUser } from '@/lib/auth';
+import { parseNoteForm, type NoteFormState } from '@/lib/note-form';
+import { updateNote, type Note } from '@/lib/notes';
 
 export async function updateNoteAction(
   rawNoteId: string,
@@ -23,12 +23,12 @@ export async function updateNoteAction(
   try {
     note = await updateNote(user.id, noteId.data, parsed.data);
   } catch (err) {
-    console.error("Failed to update note", err);
-    return { error: "Could not save your changes. Please try again.", values: parsed.values };
+    console.error('Failed to update note', err);
+    return { error: 'Could not save your changes. Please try again.', values: parsed.values };
   }
   if (!note) notFound();
 
-  revalidatePath("/dashboard");
+  revalidatePath('/dashboard');
   revalidatePath(`/notes/${note.id}`);
   redirect(`/notes/${note.id}`);
 }

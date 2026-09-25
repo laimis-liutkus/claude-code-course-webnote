@@ -1,5 +1,5 @@
-import "server-only";
-import { get, query, run } from "@/lib/db";
+import 'server-only';
+import { get, query, run } from '@/lib/db';
 
 export type Note = {
   id: string;
@@ -23,8 +23,8 @@ type NoteRow = {
   updated_at: string;
 };
 
-export const DEFAULT_NOTE_TITLE = "Untitled note";
-export const EMPTY_DOC_JSON = JSON.stringify({ type: "doc", content: [] });
+export const DEFAULT_NOTE_TITLE = 'Untitled note';
+export const EMPTY_DOC_JSON = JSON.stringify({ type: 'doc', content: [] });
 
 function toNote(row: NoteRow): Note {
   return {
@@ -40,7 +40,7 @@ function toNote(row: NoteRow): Note {
 }
 
 export async function getNoteById(userId: string, noteId: string): Promise<Note | null> {
-  const row = get<NoteRow>("SELECT * FROM notes WHERE id = ? AND user_id = ?", [noteId, userId]);
+  const row = get<NoteRow>('SELECT * FROM notes WHERE id = ? AND user_id = ?', [noteId, userId]);
   return row ? toNote(row) : null;
 }
 
@@ -49,7 +49,7 @@ export async function createNote(
   data: { title?: string; contentJson?: string },
 ): Promise<Note> {
   const id = crypto.randomUUID();
-  run("INSERT INTO notes (id, user_id, title, content_json) VALUES (?, ?, ?, ?)", [
+  run('INSERT INTO notes (id, user_id, title, content_json) VALUES (?, ?, ?, ?)', [
     id,
     userId,
     data.title || DEFAULT_NOTE_TITLE,
@@ -63,7 +63,7 @@ export async function createNote(
 
 export async function getNotesByUser(userId: string): Promise<Note[]> {
   const rows = query<NoteRow>(
-    "SELECT * FROM notes WHERE user_id = ? ORDER BY updated_at DESC, created_at DESC",
+    'SELECT * FROM notes WHERE user_id = ? ORDER BY updated_at DESC, created_at DESC',
     [userId],
   );
   return rows.map(toNote);
@@ -78,11 +78,11 @@ export async function updateNote(
     `UPDATE notes
      SET title = COALESCE(?, title), content_json = COALESCE(?, content_json), updated_at = datetime('now')
      WHERE id = ? AND user_id = ?`,
-    [data.title ?? null,data.contentJson ?? null, noteId, userId],
+    [data.title ?? null, data.contentJson ?? null, noteId, userId],
   );
   return getNoteById(userId, noteId);
 }
 
 export async function deleteNote(userId: string, noteId: string): Promise<void> {
-  run("DELETE FROM notes WHERE id = ? AND user_id = ?", [noteId, userId]);
+  run('DELETE FROM notes WHERE id = ? AND user_id = ?', [noteId, userId]);
 }

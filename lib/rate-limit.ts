@@ -1,6 +1,6 @@
-import "server-only";
-import { headers } from "next/headers";
-import { get, run } from "@/lib/db";
+import 'server-only';
+import { headers } from 'next/headers';
+import { get, run } from '@/lib/db';
 
 export type RateLimitRule = { windowMs: number; max: number };
 export type RateLimitResult = { allowed: boolean; retryAfterSec: number };
@@ -8,7 +8,7 @@ export type RateLimitResult = { allowed: boolean; retryAfterSec: number };
 // Fixed-window counter; the upsert is a single statement, so concurrent requests can't race.
 export function consumeRateLimit(key: string, { windowMs, max }: RateLimitRule): RateLimitResult {
   const now = Date.now();
-  run("DELETE FROM rate_limit WHERE reset_at <= ?", [now]);
+  run('DELETE FROM rate_limit WHERE reset_at <= ?', [now]);
 
   const row = get<{ count: number; reset_at: number }>(
     `INSERT INTO rate_limit (key, count, reset_at) VALUES (?1, 1, ?2 + ?3)
@@ -29,6 +29,6 @@ export function consumeRateLimit(key: string, { windowMs, max }: RateLimitRule):
 // Only trustworthy behind a proxy that overwrites these headers; pair IP limits with per-account ones.
 export async function getClientIp(): Promise<string> {
   const h = await headers();
-  const forwarded = h.get("x-forwarded-for")?.split(",")[0]?.trim();
-  return forwarded || h.get("x-real-ip")?.trim() || "unknown";
+  const forwarded = h.get('x-forwarded-for')?.split(',')[0]?.trim();
+  return forwarded || h.get('x-real-ip')?.trim() || 'unknown';
 }

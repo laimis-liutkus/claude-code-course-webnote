@@ -34,21 +34,21 @@ Run Step 1 for ALL libraries in parallel.
 If Context7 doesn't have the library or lacks specific info:
 
 1. **Search for LLM-friendly docs first:**
-    - Search: `{library} llms.txt site:{official-docs-domain}`
-    - Search: `{library} documentation llms.txt`
+   - Search: `{library} llms.txt site:{official-docs-domain}`
+   - Search: `{library} documentation llms.txt`
 
 2. **Try known llms.txt paths (WebFetch):**
-    - `{docs-base-url}/llms.txt`
-    - `{docs-base-url}/docs/llms.txt`
-    - `{docs-base-url}/llms-full.txt`
+   - `{docs-base-url}/llms.txt`
+   - `{docs-base-url}/docs/llms.txt`
+   - `{docs-base-url}/llms-full.txt`
 
 3. **Try .md documentation paths:**
-    - Search: `{library} {topic} filetype:md site:github.com`
-    - WebFetch `{docs-base-url}/docs/{topic}.md`
-    - WebFetch `{docs-base-url}/{topic}.md`
+   - Search: `{library} {topic} filetype:md site:github.com`
+   - WebFetch `{docs-base-url}/docs/{topic}.md`
+   - WebFetch `{docs-base-url}/{topic}.md`
 
 4. **Final fallback - fetch normal page:**
-    - If no llms.txt or .md found, WebFetch the official docs page with a prompt targeting the needed info
+   - If no llms.txt or .md found, WebFetch the official docs page with a prompt targeting the needed info
 
 ## Parallel Execution Rules
 

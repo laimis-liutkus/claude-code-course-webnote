@@ -1,4 +1,4 @@
-import StarterKit from "@tiptap/starter-kit";
+import StarterKit from '@tiptap/starter-kit';
 
 // Shared by the editor and the server-side content sanitizer so both use one schema.
 export const noteExtensions = [

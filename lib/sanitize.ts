@@ -1,7 +1,7 @@
-import { getSchema } from "@tiptap/core";
-import { Node } from "@tiptap/pm/model";
-import { z } from "zod";
-import { noteExtensions } from "@/lib/editor-extensions";
+import { getSchema } from '@tiptap/core';
+import { Node } from '@tiptap/pm/model';
+import { z } from 'zod';
+import { noteExtensions } from '@/lib/editor-extensions';
 
 // Every write path for user text (create/update note, auth) must go through these helpers.
 
@@ -20,11 +20,7 @@ type JsonNode = {
 };
 
 export function sanitizePlainText(value: string): string {
-  return value
-    .normalize("NFC")
-    .replace(/\s+/g, " ")
-    .replace(UNSAFE_CHARS, "")
-    .trim();
+  return value.normalize('NFC').replace(/\s+/g, ' ').replace(UNSAFE_CHARS, '').trim();
 }
 
 export function plainTextSchema(max: number) {
@@ -35,19 +31,19 @@ export function plainTextSchema(max: number) {
 }
 
 function assertDepth(value: unknown, depth = 0): void {
-  if (depth > MAX_CONTENT_DEPTH) throw new Error("Note content is nested too deeply");
-  if (typeof value !== "object" || value === null) return;
+  if (depth > MAX_CONTENT_DEPTH) throw new Error('Note content is nested too deeply');
+  if (typeof value !== 'object' || value === null) return;
   const content = (value as { content?: unknown }).content;
   if (Array.isArray(content)) content.forEach((child) => assertDepth(child, depth + 1));
 }
 
 function normalizeAttrs(node: JsonNode): void {
-  if (node.type === "heading" && !HEADING_LEVELS.has(Number(node.attrs?.level))) {
+  if (node.type === 'heading' && !HEADING_LEVELS.has(Number(node.attrs?.level))) {
     node.attrs = { ...node.attrs, level: 1 };
   }
-  if (node.type === "codeBlock" && node.attrs) {
+  if (node.type === 'codeBlock' && node.attrs) {
     const language = node.attrs.language;
-    if (typeof language !== "string" || !CODE_LANGUAGE_PATTERN.test(language)) {
+    if (typeof language !== 'string' || !CODE_LANGUAGE_PATTERN.test(language)) {
       node.attrs.language = null;
     }
   }
@@ -60,7 +56,7 @@ export function sanitizeNoteContent(json: unknown): string {
   assertDepth(json);
   const node = Node.fromJSON(noteSchema, json);
   node.check();
-  if (node.type.name !== "doc") throw new Error("Note content must be a doc");
+  if (node.type.name !== 'doc') throw new Error('Note content must be a doc');
 
   const doc = node.toJSON() as JsonNode;
   normalizeAttrs(doc);

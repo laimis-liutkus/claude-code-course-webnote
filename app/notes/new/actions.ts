@@ -1,9 +1,9 @@
-"use server";
+'use server';
 
-import { redirect } from "next/navigation";
-import { requireUser } from "@/lib/auth";
-import { parseNoteForm, type NoteFormState } from "@/lib/note-form";
-import { createNote } from "@/lib/notes";
+import { redirect } from 'next/navigation';
+import { requireUser } from '@/lib/auth';
+import { parseNoteForm, type NoteFormState } from '@/lib/note-form';
+import { createNote } from '@/lib/notes';
 
 export async function createNoteAction(
   _prev: NoteFormState,
@@ -19,8 +19,8 @@ export async function createNoteAction(
     const note = await createNote(user.id, parsed.data);
     noteId = note.id;
   } catch (err) {
-    console.error("Failed to create note", err);
-    return { error: "Could not save your note. Please try again.", values: parsed.values };
+    console.error('Failed to create note', err);
+    return { error: 'Could not save your note. Please try again.', values: parsed.values };
   }
 
   redirect(`/notes/${noteId}`);

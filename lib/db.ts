@@ -1,8 +1,8 @@
-import { Database, type SQLQueryBindings } from "bun:sqlite";
-import { mkdirSync } from "node:fs";
-import { dirname } from "node:path";
+import { Database, type SQLQueryBindings } from 'bun:sqlite';
+import { mkdirSync } from 'node:fs';
+import { dirname } from 'node:path';
 
-const DB_PATH = process.env.DB_PATH ?? "data/app.db";
+const DB_PATH = process.env.DB_PATH ?? 'data/app.db';
 
 const SCHEMA = `
 CREATE TABLE IF NOT EXISTS "user" (
@@ -79,9 +79,9 @@ CREATE TABLE IF NOT EXISTS rate_limit (
 function openDb(): Database {
   mkdirSync(dirname(DB_PATH), { recursive: true });
   const database = new Database(DB_PATH, { create: true, strict: true });
-  database.run("PRAGMA journal_mode = WAL;");
-  database.run("PRAGMA foreign_keys = ON;");
-  database.run("PRAGMA busy_timeout = 5000;");
+  database.run('PRAGMA journal_mode = WAL;');
+  database.run('PRAGMA foreign_keys = ON;');
+  database.run('PRAGMA busy_timeout = 5000;');
   database.run(SCHEMA);
   return database;
 }
@@ -90,7 +90,7 @@ function openDb(): Database {
 const globalForDb = globalThis as unknown as { __db?: Database };
 
 export const db: Database = globalForDb.__db ?? openDb();
-if (process.env.NODE_ENV !== "production") globalForDb.__db = db;
+if (process.env.NODE_ENV !== 'production') globalForDb.__db = db;
 
 export function getDb(): Database {
   return db;

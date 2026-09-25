@@ -1,9 +1,9 @@
-import "server-only";
-import { notFound } from "next/navigation";
-import { cache } from "react";
-import { z } from "zod";
-import { requireUser } from "@/lib/auth";
-import { getNoteById, type Note } from "@/lib/notes";
+import 'server-only';
+import { notFound } from 'next/navigation';
+import { cache } from 'react';
+import { z } from 'zod';
+import { requireUser } from '@/lib/auth';
+import { getNoteById, type Note } from '@/lib/notes';
 
 // Loads a note owned by the current user or 404s.
 // Deduplicated per request so generateMetadata and the page share one query.

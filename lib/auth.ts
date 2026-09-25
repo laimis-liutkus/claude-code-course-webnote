@@ -1,10 +1,10 @@
-import "server-only";
-import { betterAuth } from "better-auth";
-import { nextCookies } from "better-auth/next-js";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
-import { cache } from "react";
-import { db } from "@/lib/db";
+import 'server-only';
+import { betterAuth } from 'better-auth';
+import { nextCookies } from 'better-auth/next-js';
+import { headers } from 'next/headers';
+import { redirect } from 'next/navigation';
+import { cache } from 'react';
+import { db } from '@/lib/db';
 
 export const auth = betterAuth({
   database: db,
@@ -19,15 +19,15 @@ export const auth = betterAuth({
     window: 60,
     max: 100,
     customRules: {
-      "/sign-in/email": { window: 60, max: 10 },
-      "/sign-up/email": { window: 600, max: 5 },
+      '/sign-in/email': { window: 60, max: 10 },
+      '/sign-up/email': { window: 600, max: 5 },
     },
   },
   plugins: [nextCookies()],
 });
 
 export type Session = typeof auth.$Infer.Session;
-export type User = Session["user"];
+export type User = Session['user'];
 
 // Deduplicated per request, so pages and nested components can call it freely.
 export const getSession = cache(async (): Promise<Session | null> => {
@@ -43,6 +43,6 @@ export async function getCurrentUser(): Promise<User | null> {
 // Route handlers should use getCurrentUser() and respond with 401 instead.
 export async function requireUser(): Promise<User> {
   const user = await getCurrentUser();
-  if (!user) redirect("/authenticate");
+  if (!user) redirect('/authenticate');
   return user;
 }
