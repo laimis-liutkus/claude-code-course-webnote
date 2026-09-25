@@ -1,49 +1,18 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { z } from "zod";
 import { requireUser } from "@/lib/auth";
-import { createNote, EMPTY_DOC_JSON } from "@/lib/notes";
-import { plainTextSchema, sanitizeNoteContent } from "@/lib/sanitize";
-
-export type NewNoteFormState = {
-  error?: string;
-  fieldErrors?: Partial<Record<"title" | "contentJson", string[]>>;
-  values?: { title?: string; contentJson?: string };
-};
-
-const MAX_CONTENT_BYTES = 500_000;
-
-const newNoteSchema = z.object({
-  title: plainTextSchema(200),
-  contentJson: z
-    .string()
-    .max(MAX_CONTENT_BYTES, "Note content is too large")
-    .transform((value, ctx) => {
-      if (value === "") return EMPTY_DOC_JSON;
-      try {
-        return sanitizeNoteContent(JSON.parse(value));
-      } catch {
-        ctx.addIssue({ code: "custom", message: "Note content is invalid" });
-        return z.NEVER;
-      }
-    }),
-});
+import { parseNoteForm, type NoteFormState } from "@/lib/note-form";
+import { createNote } from "@/lib/notes";
 
 export async function createNoteAction(
-  _prev: NewNoteFormState,
+  _prev: NoteFormState,
   formData: FormData,
-): Promise<NewNoteFormState> {
+): Promise<NoteFormState> {
   const user = await requireUser();
-  const values = {
-    title: String(formData.get("title") ?? ""),
-    contentJson: String(formData.get("contentJson") ?? ""),
-  };
 
-  const parsed = newNoteSchema.safeParse(values);
-  if (!parsed.success) {
-    return { fieldErrors: z.flattenError(parsed.error).fieldErrors, values };
-  }
+  const parsed = parseNoteForm(formData);
+  if (!parsed.success) return parsed.state;
 
   let noteId: string;
   try {
@@ -51,7 +20,7 @@ export async function createNoteAction(
     noteId = note.id;
   } catch (err) {
     console.error("Failed to create note", err);
-    return { error: "Could not save your note. Please try again.", values };
+    return { error: "Could not save your note. Please try again.", values: parsed.values };
   }
 
   redirect(`/notes/${noteId}`);

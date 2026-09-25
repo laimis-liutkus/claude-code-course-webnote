@@ -68,3 +68,21 @@ export async function getNotesByUser(userId: string): Promise<Note[]> {
   );
   return rows.map(toNote);
 }
+
+export async function updateNote(
+  userId: string,
+  noteId: string,
+  data: Partial<{ title: string; contentJson: string }>,
+): Promise<Note | null> {
+  run(
+    `UPDATE notes
+     SET title = COALESCE(?, title), content_json = COALESCE(?, content_json), updated_at = datetime('now')
+     WHERE id = ? AND user_id = ?`,
+    [data.title ?? null,data.contentJson ?? null, noteId, userId],
+  );
+  return getNoteById(userId, noteId);
+}
+
+export async function deleteNote(userId: string, noteId: string): Promise<void> {
+  run("DELETE FROM notes WHERE id = ? AND user_id = ?", [noteId, userId]);
+}

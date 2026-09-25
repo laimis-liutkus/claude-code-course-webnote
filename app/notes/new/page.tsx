@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import type { JSX } from "react";
 import { requireUser } from "@/lib/auth";
-import { NewNoteForm } from "./NewNoteForm";
+import { NoteForm } from "@/components/NoteForm";
+import { createNoteAction } from "./actions";
 
 export const metadata: Metadata = {
   title: "New note",
@@ -19,7 +20,7 @@ export default async function NewNotePage(): Promise<JSX.Element> {
         <h1 id="new-note-heading" className="mb-6 text-2xl font-semibold tracking-tight">
           New note
         </h1>
-        <NewNoteForm />
+        <NoteForm action={createNoteAction} submitLabel="Create note" pendingLabel="Creating…" />
       </section>
     </main>
   );
